@@ -17,6 +17,9 @@ file(GLOB SRC
     MergeRotationsPatterns.cpp
     ions_decompositions.cpp
     IonsDecompositionPatterns.cpp
+
+    hadamard_conjugation.cpp
+    HadamardConjugationPatterns.cpp
 )
 
 get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
