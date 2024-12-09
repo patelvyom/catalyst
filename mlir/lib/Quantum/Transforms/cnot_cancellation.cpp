@@ -59,7 +59,7 @@ struct CNOTCancellationPass
         }
 
         RewritePatternSet patterns(&getContext());
-        populateSelfInversePatterns(patterns);
+        populateCNOTCancellationPatterns(patterns);
 
         if (failed(applyPatternsAndFoldGreedily(targetfunc, std::move(patterns)))) {
             return signalPassFailure();
