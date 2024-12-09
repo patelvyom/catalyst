@@ -52,4 +52,5 @@ void catalyst::registerAllCatalystPasses()
     mlir::registerPass(catalyst::createSplitMultipleTapesPass);
     mlir::registerPass(catalyst::createTestPass);
     mlir::registerPass(catalyst::createIonsDecompositionPass);
+    mlir::registerPass(catalyst::createHadamardConjugationPass);
 }
