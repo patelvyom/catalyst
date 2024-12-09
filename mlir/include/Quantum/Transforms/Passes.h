@@ -31,5 +31,6 @@ std::unique_ptr<mlir::Pass> createSplitMultipleTapesPass();
 std::unique_ptr<mlir::Pass> createMergeRotationsPass();
 std::unique_ptr<mlir::Pass> createIonsDecompositionPass();
 std::unique_ptr<mlir::Pass> createHadamardConjugationPass();
+std::unique_ptr<mlir::Pass> createCNOTCancellationPass();
 
 } // namespace catalyst

@@ -116,6 +116,13 @@ def HadamardConjugationPass : Pass<"hadamard-conjugation"> {
     let options = QuantumCircuitTransformationPass.options;
 }
 
+def CNOTCancellationPass : Pass<"cnot-cancellation"> {
+    let summary = "Perform CNOT cancellation on the given quantum circuit.";
+
+    let constructor = "catalyst::createCNOTCancellationPass()";
+    let options = QuantumCircuitTransformationPass.options;
+}
+
 // ----- Quantum circuit transformation passes end ----- //
 
 #endif // QUANTUM_PASSES
