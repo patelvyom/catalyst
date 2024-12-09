@@ -56,6 +56,7 @@ all: llvm mhlo enzyme dialects plugin
 llvm:
 	@echo "build LLVM and MLIR enabling Python bindings"
 	cmake -G Ninja -S llvm-project/llvm -B $(LLVM_BUILD_DIR) \
+		-DLLVM_ENABLE_LIBCXX=ON \
 		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
 		-DLLVM_BUILD_EXAMPLES=OFF \
 		-DLLVM_TARGETS_TO_BUILD="host" \
