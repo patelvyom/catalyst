@@ -109,6 +109,13 @@ def MergeRotationsPass : Pass<"merge-rotations"> {
     let constructor = "catalyst::createMergeRotationsPass()";
 }
 
+def HadamardConjugationPass : Pass<"hadamard-conjugation"> {
+    let summary = "Perform hadamard conjugation on the given quantum circuit.";
+
+    let constructor = "catalyst::createHadamardConjugationPass()";
+    let options = QuantumCircuitTransformationPass.options;
+}
+
 // ----- Quantum circuit transformation passes end ----- //
 
 #endif // QUANTUM_PASSES

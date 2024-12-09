@@ -28,6 +28,6 @@ void populateAdjointPatterns(mlir::RewritePatternSet &);
 void populateSelfInversePatterns(mlir::RewritePatternSet &);
 void populateMergeRotationsPatterns(mlir::RewritePatternSet &);
 void populateIonsDecompositionPatterns(mlir::RewritePatternSet &);
-
+void populateHadamardConjugationPatterns(mlir::RewritePatternSet &);
 } // namespace quantum
 } // namespace catalyst
