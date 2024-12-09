@@ -71,7 +71,7 @@ struct HadamardConjugationRewritePattern : public mlir::OpRewritePattern<CustomO
         if (!vpga.getVerifierResult())
             return failure();
         StringRef parentGateName = parentOp.getGateName();
-        if (parentGateName != "PauliX")
+        if (parentGateName != "PauliX" && parentGateName != "PauliZ")
             return failure();
 
         auto grandparentOp = dyn_cast_or_null<CustomOp>(parentOp.getInQubits()[0].getDefiningOp());
@@ -82,7 +82,7 @@ struct HadamardConjugationRewritePattern : public mlir::OpRewritePattern<CustomO
         if (grandparentGateName != "Hadamard")
             return failure();
 
-        dbgs() << "Here we should conjugate HXH -> Z" << "\n";
+        dbgs() << "Here we should conjugate" << "\n";
         return failure(); // TODO: Implement the rewrite
         return success();
     }
