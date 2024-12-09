@@ -20,6 +20,9 @@ file(GLOB SRC
 
     hadamard_conjugation.cpp
     HadamardConjugationPatterns.cpp
+
+    cnot_cancellation.cpp
+    CNOTCancellationPatterns.cpp
 )
 
 get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)

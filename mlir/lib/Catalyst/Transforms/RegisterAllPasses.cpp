@@ -53,4 +53,5 @@ void catalyst::registerAllCatalystPasses()
     mlir::registerPass(catalyst::createTestPass);
     mlir::registerPass(catalyst::createIonsDecompositionPass);
     mlir::registerPass(catalyst::createHadamardConjugationPass);
+    mlir::registerPass(catalyst::createCNOTCancellationPass);
 }
