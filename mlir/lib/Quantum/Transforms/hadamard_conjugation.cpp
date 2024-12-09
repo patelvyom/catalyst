@@ -46,14 +46,6 @@ struct HadamardConjugationPass : impl::HadamardConjugationPassBase<HadamardConju
             // Do nothing and exit!
             return;
         }
-        RewritePatternSet patternsCanonicalization(&getContext());
-        catalyst::quantum::CustomOp::getCanonicalizationPatterns(patternsCanonicalization,
-                                                                 &getContext());
-        catalyst::quantum::MultiRZOp::getCanonicalizationPatterns(patternsCanonicalization,
-                                                                  &getContext());
-        if (failed(applyPatternsAndFoldGreedily(targetfunc, std::move(patternsCanonicalization)))) {
-            return signalPassFailure();
-        }
 
         RewritePatternSet patterns(&getContext());
         populateHadamardConjugationPatterns(patterns);

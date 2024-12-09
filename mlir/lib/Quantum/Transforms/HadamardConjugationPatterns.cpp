@@ -64,26 +64,25 @@ struct HadamardConjugationRewritePattern : public mlir::OpRewritePattern<CustomO
         LLVM_DEBUG(dbgs() << "Rewriting the following operation:\n" << op << "\n");
         auto loc = op.getLoc();
         StringRef opGateName = op.getGateName();
-        dbgs() << "opGateName: " << opGateName << "\n";
         if (opGateName != "Hadamard")
             return failure();
         auto parentOp = dyn_cast_or_null<CustomOp>(op.getInQubits()[0].getDefiningOp());
-        if (!parentOp)
+        VerifyParentGateAnalysis<CustomOp> vpga(parentOp);  
+        if (!vpga.getVerifierResult())
             return failure();
         StringRef parentGateName = parentOp.getGateName();
-        dbgs() << "parentGateName: " << parentGateName << "\n";
         if (parentGateName != "PauliX")
             return failure();
 
         auto grandparentOp = dyn_cast_or_null<CustomOp>(parentOp.getInQubits()[0].getDefiningOp());
-        if (!grandparentOp)
+        VerifyParentGateAnalysis<CustomOp> vgpga(grandparentOp);
+        if (!vgpga.getVerifierResult())
             return failure();
         StringRef grandparentGateName = grandparentOp.getGateName();
-        dbgs() << "grandparentGateName: " << grandparentGateName << "\n";
         if (grandparentGateName != "Hadamard")
             return failure();
 
-        dbgs() << "Here we should conjugate the Hadamard gate" << "\n";
+        dbgs() << "Here we should conjugate HXH -> Z" << "\n";
         return failure(); // TODO: Implement the rewrite
         return success();
     }
