@@ -123,6 +123,13 @@ def CNOTCancellationPass : Pass<"cnot-cancellation"> {
     let options = QuantumCircuitTransformationPass.options;
 }
 
+def CNOTPropagationPass : Pass<"cnot-propagation"> {
+    let summary = "Propagate single-qubit Pauli gate through the CNOT gate in the given quantum circuit.";
+
+    let constructor = "catalyst::createCNOTPropagationPass()";
+    let options = QuantumCircuitTransformationPass.options;
+}
+
 // ----- Quantum circuit transformation passes end ----- //
 
 #endif // QUANTUM_PASSES
