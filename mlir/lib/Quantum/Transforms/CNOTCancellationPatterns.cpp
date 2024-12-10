@@ -20,11 +20,10 @@ struct CNOTCancellationRewritePattern : public mlir::OpRewritePattern<CustomOp> 
     mlir::LogicalResult matchAndRewrite(CustomOp op, mlir::PatternRewriter &rewriter) const override
     {
         LLVM_DEBUG(dbgs() << "Rewriting the following operation:\n" << op << "\n");
-        auto loc = op.getLoc();
         StringRef opGateName = op.getGateName();
         if (opGateName != "CNOT")
             return failure();
-        
+
         VerifyParentGateAndNameAnalysis vpga(op);
         if (!vpga.getVerifierResult())
             return failure();
