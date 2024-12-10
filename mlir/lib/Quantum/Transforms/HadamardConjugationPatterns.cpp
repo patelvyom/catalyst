@@ -13,77 +13,45 @@ using namespace mlir;
 using namespace catalyst::quantum;
 
 namespace {
-
-// struct MergeRotationsRewritePattern : public mlir::OpRewritePattern<CustomOp> {
-//     using mlir::OpRewritePattern<CustomOp>::OpRewritePattern;
-
-//     mlir::LogicalResult matchAndRewrite(CustomOp op, mlir::PatternRewriter &rewriter) const override
-//     {
-//         LLVM_DEBUG(dbgs() << "Simplifying the following operation:\n" << op << "\n");
-//         auto loc = op.getLoc();
-//         StringRef opGateName = op.getGateName();
-//         if (!rotationsSet.contains(opGateName))
-//             return failure();
-//         ValueRange inQubits = op.getInQubits();
-//         auto parentOp = dyn_cast_or_null<CustomOp>(inQubits[0].getDefiningOp());
-
-//         VerifyParentGateAndNameAnalysis vpga(op);
-//         if (!vpga.getVerifierResult()) {
-//             return failure();
-//         }
-
-//         TypeRange outQubitsTypes = op.getOutQubits().getTypes();
-//         TypeRange outQubitsCtrlTypes = op.getOutCtrlQubits().getTypes();
-//         ValueRange parentInQubits = parentOp.getInQubits();
-//         ValueRange parentInCtrlQubits = parentOp.getInCtrlQubits();
-//         ValueRange parentInCtrlValues = parentOp.getInCtrlValues();
-
-//         auto parentParams = parentOp.getParams();
-//         auto params = op.getParams();
-//         SmallVector<mlir::Value> sumParams;
-//         for (auto [param, parentParam] : llvm::zip(params, parentParams)) {
-//             mlir::Value sumParam =
-//                 rewriter.create<arith::AddFOp>(loc, parentParam, param).getResult();
-//             sumParams.push_back(sumParam);
-//         };
-//         auto mergeOp = rewriter.create<CustomOp>(loc, outQubitsTypes, outQubitsCtrlTypes, sumParams,
-//                                                  parentInQubits, opGateName, nullptr,
-//                                                  parentInCtrlQubits, parentInCtrlValues);
-
-//         op.replaceAllUsesWith(mergeOp);
-
-//         return success();
-//     }
-// };
-
 struct HadamardConjugationRewritePattern : public mlir::OpRewritePattern<CustomOp> {
     using mlir::OpRewritePattern<CustomOp>::OpRewritePattern;
 
     mlir::LogicalResult matchAndRewrite(CustomOp op, mlir::PatternRewriter &rewriter) const override
     {
         LLVM_DEBUG(dbgs() << "Rewriting the following operation:\n" << op << "\n");
-        auto loc = op.getLoc();
         StringRef opGateName = op.getGateName();
         if (opGateName != "Hadamard")
             return failure();
         auto parentOp = dyn_cast_or_null<CustomOp>(op.getInQubits()[0].getDefiningOp());
-        VerifyParentGateAnalysis<CustomOp> vpga(parentOp);  
+        VerifyParentGateAnalysis<CustomOp> vpga(parentOp);
         if (!vpga.getVerifierResult())
             return failure();
         StringRef parentGateName = parentOp.getGateName();
         if (parentGateName != "PauliX" && parentGateName != "PauliZ")
             return failure();
 
-        auto grandparentOp = dyn_cast_or_null<CustomOp>(parentOp.getInQubits()[0].getDefiningOp());
-        VerifyParentGateAnalysis<CustomOp> vgpga(grandparentOp);
+        auto grandParentOp = dyn_cast_or_null<CustomOp>(parentOp.getInQubits()[0].getDefiningOp());
+        VerifyParentGateAnalysis<CustomOp> vgpga(grandParentOp);
         if (!vgpga.getVerifierResult())
             return failure();
-        StringRef grandparentGateName = grandparentOp.getGateName();
-        if (grandparentGateName != "Hadamard")
+        StringRef grandParentGateName = grandParentOp.getGateName();
+        if (grandParentGateName != "Hadamard")
             return failure();
 
-        dbgs() << "Here we should conjugate" << "\n";
-        return failure(); // TODO: Implement the rewrite
+        auto loc = op.getLoc();
+        dbgs() << "Found Hadamard conjugation at loc " << loc << "\n";
+
+        // Replace current op with X. Set input of X to input of H (grandparent op) and output of X
+        // to output of H (parent op).
+        auto newOpParams = parentOp.getParams();
+        StringRef newOpName = (parentGateName == "PauliX") ? "PauliZ" : "PauliX";
+        TypeRange newOpQubitsTypes = op.getOutQubits().getTypes();
+        ValueRange newOpInQubits = grandParentOp.getInQubits();
+
+        auto mergeOp = rewriter.create<CustomOp>(loc, newOpQubitsTypes, ValueRange{}, newOpParams,
+                                                 newOpInQubits, newOpName, nullptr, ValueRange{},
+                                                 ValueRange{});
+        op.replaceAllUsesWith(mergeOp);
         return success();
     }
 };
