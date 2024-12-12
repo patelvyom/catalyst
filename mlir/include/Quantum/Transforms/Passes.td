@@ -113,21 +113,18 @@ def HadamardConjugationPass : Pass<"hadamard-conjugation"> {
     let summary = "Perform hadamard conjugation on the given quantum circuit.";
 
     let constructor = "catalyst::createHadamardConjugationPass()";
-    let options = QuantumCircuitTransformationPass.options;
 }
 
 def CNOTCancellationPass : Pass<"cnot-cancellation"> {
     let summary = "Perform CNOT cancellation on the given quantum circuit.";
 
     let constructor = "catalyst::createCNOTCancellationPass()";
-    let options = QuantumCircuitTransformationPass.options;
 }
 
 def CNOTPropagationPass : Pass<"cnot-propagation"> {
     let summary = "Propagate single-qubit Pauli gate through the CNOT gate in the given quantum circuit.";
 
     let constructor = "catalyst::createCNOTPropagationPass()";
-    let options = QuantumCircuitTransformationPass.options;
 }
 
 // ----- Quantum circuit transformation passes end ----- //
