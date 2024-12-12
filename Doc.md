@@ -51,7 +51,7 @@ This guide provides step-by-step instructions to install and build the project o
 ### Clone the Repository
 First, clone the forked repository:
 ```bash
-git clone https://github.com/patelvyom/catalyst.git
+git clone --recurse-submodules --shallow-submodules https://github.com/patelvyom/catalyst.git
 ```
 
 ### Build Requirements
