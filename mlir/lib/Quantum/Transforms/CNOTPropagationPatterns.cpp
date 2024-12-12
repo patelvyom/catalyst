@@ -25,11 +25,10 @@ struct CNOTPropagationRewritePattern : public mlir::OpRewritePattern<CustomOp> {
         if (opGateName != "CNOT")
             return failure();
 
-        auto parentOp = cast<CustomOp>(op.getInQubits()[0].getDefiningOp());
+        auto parentOp = dyn_cast_or_null<CustomOp>(op.getInQubits().front().getDefiningOp());
         StringRef parentOpGateName = parentOp.getGateName();
         if (!PropagationOps.contains(parentOpGateName))
             return failure();
-
         if (op.getInQubits().size() != 2 || parentOp.getOutQubits().size() != 1)
             return failure();
 
@@ -45,14 +44,13 @@ struct CNOTPropagationRewritePattern : public mlir::OpRewritePattern<CustomOp> {
             return failure();
 
         dbgs() << "CNOT propagation pattern matched\n";
-        auto opLoc = op.getLoc();
+
         if (parentOpGateName == "PauliX") {
             if (foundCtrlMatch) {
-                auto cnotOp = cast<quantum::CustomOp>(op);
-                Operation *definingOp = cnotOp.getInQubits().front().getDefiningOp();
-                auto xOp = cast<quantum::CustomOp>(definingOp);
-
-                mlir::Location opLoc = op->getLoc();
+                auto cnotOp = op;
+                auto xOp = dyn_cast_or_null<quantum::CustomOp>(op.getInQubits().front().getDefiningOp());
+                TypeRange outQubitsTypes = cnotOp.getOutQubits().getTypes();
+                mlir::Location opLoc = op.getLoc();
                 // Create new CNOT operation with original non-X input
                 SmallVector<mlir::Value> cnotInQubits;
                 cnotInQubits.push_back(xOp.getInQubits().front()); // Use input to X gate
@@ -60,15 +58,14 @@ struct CNOTPropagationRewritePattern : public mlir::OpRewritePattern<CustomOp> {
 
                 auto newCnotOp = rewriter.create<quantum::CustomOp>(
                                  opLoc,
-                                 cnotOp.getOutQubits().getTypes(),
+                                 outQubitsTypes,
                                  ValueRange{},
                                  cnotOp.getParams(),
-                                 cnotInQubits,
+                                 ValueRange(cnotInQubits),
                                  "CNOT",
                                  nullptr,
                                  ValueRange{},
                                  ValueRange{});
-
                 // Create X gates operating on CNOT outputs
                 auto xOp1 = rewriter.create<quantum::CustomOp>(
                             opLoc,
@@ -91,27 +88,23 @@ struct CNOTPropagationRewritePattern : public mlir::OpRewritePattern<CustomOp> {
                             ValueRange{},
                             ValueRange{});
 
-                // SmallVector<mlir::Value> newOp;
-                // newOp.push_back(newCnotOp.getOutQubits().front());
-                // newOp.push_back(xOp1.getOutQubits().front());
-                // newOp.push_back(xOp2.getOutQubits().front());
-                rewriter.replaceOp(cnotOp, newCnotOp);
-                // rewriter.eraseOp(xOp); // Remove original X gate
+                SmallVector<mlir::Value> newOp;
+                newOp.push_back(newCnotOp.getOutQubits().front());
+                newOp.push_back(xOp1.getOutQubits().front());
+                newOp.push_back(xOp2.getOutQubits().front());
+                op.replaceAllUsesWith(newOp);
+                rewriter.eraseOp(xOp);                      // Remove original X gate
                 return success();
-            }
-            else {
+            }else {
                 return failure();
             }
-        }
-        else if (parentOpGateName == "PauliZ") {
+        }else if (parentOpGateName == "PauliZ") {
             if (foundNonCtrlMatch) { // CNOT propagates Z from target to control
                 return failure();
-            }
-            else {
+            }else {
                 return failure();
             }
         }
-
         return failure();
     }
 };
