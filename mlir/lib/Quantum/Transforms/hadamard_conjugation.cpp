@@ -24,33 +24,14 @@ struct HadamardConjugationPass : impl::HadamardConjugationPassBase<HadamardConju
 
     void runOnOperation() final
     {
-        LLVM_DEBUG(dbgs() << "hadamard conjugation pass"
-                          << "\n");
+        LLVM_DEBUG(dbgs() << "hadamard conjugation pass" << "\n");
 
         Operation *module = getOperation();
-        Operation *targetfunc;
-
-        WalkResult result = module->walk([&](func::FuncOp op) {
-            StringRef funcName = op.getSymName();
-
-            if (funcName != FuncNameOpt) {
-                // not the function to run the pass on, visit the next function
-                return WalkResult::advance();
-            }
-            targetfunc = op;
-            return WalkResult::interrupt();
-        });
-
-        if (!result.wasInterrupted()) {
-            // Never met a target function
-            // Do nothing and exit!
-            return;
-        }
 
         RewritePatternSet patterns(&getContext());
         populateHadamardConjugationPatterns(patterns);
 
-        if (failed(applyPatternsAndFoldGreedily(targetfunc, std::move(patterns)))) {
+        if (failed(applyPatternsAndFoldGreedily(module, std::move(patterns)))) {
             return signalPassFailure();
         }
     }
