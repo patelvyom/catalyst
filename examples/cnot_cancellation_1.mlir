@@ -1,3 +1,5 @@
+// Description: A simple example of a quantum circuit with two adjacent CNOT gates.
+
 module {
   func.func @my_circuit() -> (!quantum.bit, !quantum.bit) {
     %0 = quantum.alloc( 2) : !quantum.reg
@@ -8,3 +10,13 @@ module {
     return %out_qubits_0#0, %out_qubits_0#1 : !quantum.bit, !quantum.bit
   }
 }
+
+// Expected Output
+// module {
+//   func.func @my_circuit() -> (!quantum.bit, !quantum.bit) {
+//     %0 = quantum.alloc( 2) : !quantum.reg
+//     %1 = quantum.extract %0[ 0] : !quantum.reg -> !quantum.bit
+//     %2 = quantum.extract %0[ 1] : !quantum.reg -> !quantum.bit
+//     return %1, %2 : !quantum.bit, !quantum.bit
+//   }
+// }
