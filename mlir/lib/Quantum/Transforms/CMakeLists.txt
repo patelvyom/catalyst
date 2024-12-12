@@ -24,6 +24,8 @@ file(GLOB SRC
     CNOTCancellationPatterns.cpp
     cnot_propagation.cpp
     CNOTPropagationPatterns.cpp
+    hermitian_cancellation.cpp
+    HermitianCancellationPatterns.cpp
 )
 
 get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)

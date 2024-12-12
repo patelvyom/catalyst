@@ -31,5 +31,6 @@ void populateIonsDecompositionPatterns(mlir::RewritePatternSet &);
 void populateHadamardConjugationPatterns(mlir::RewritePatternSet &);
 void populateCNOTCancellationPatterns(mlir::RewritePatternSet &);
 void populateCNOTPropagationPatterns(mlir::RewritePatternSet &);
+void populateHermitianCancellationPatterns(mlir::RewritePatternSet &);
 } // namespace quantum
 } // namespace catalyst

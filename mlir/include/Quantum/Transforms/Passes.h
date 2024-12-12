@@ -33,5 +33,6 @@ std::unique_ptr<mlir::Pass> createIonsDecompositionPass();
 std::unique_ptr<mlir::Pass> createHadamardConjugationPass();
 std::unique_ptr<mlir::Pass> createCNOTCancellationPass();
 std::unique_ptr<mlir::Pass> createCNOTPropagationPass();
+std::unique_ptr<mlir::Pass> createHermitianCancellationPass();
 
 } // namespace catalyst

@@ -127,6 +127,11 @@ def CNOTPropagationPass : Pass<"cnot-propagation"> {
     let constructor = "catalyst::createCNOTPropagationPass()";
 }
 
+def HermitianCancellationPass : Pass<"hermitian-cancellation"> {
+    let summary = "Cancel consecutive hermitian single-qubit operations in the given quantum circuit.";
+
+    let constructor = "catalyst::createHermitianCancellationPass()";
+}
 // ----- Quantum circuit transformation passes end ----- //
 
 #endif // QUANTUM_PASSES
